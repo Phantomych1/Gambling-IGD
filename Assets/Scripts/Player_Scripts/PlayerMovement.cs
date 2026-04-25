@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformJump()
         {
-            _verticalVelocity = 7;
+            _verticalVelocity = 8.5f;
         }
 
     void Start()
