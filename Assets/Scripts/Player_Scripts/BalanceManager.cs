@@ -28,7 +28,7 @@ public class BalanceManager : MonoBehaviour
     /// Triggers the OnBalanceChanged event after updating the balance, passing the new balance as a parameter.<br/>
     /// </summary>
     /// <param name="amount">The amount of money to add to the player's balance.</param>
-    public void RemoveMoney(int amount)
+    public void RemoveMoneyFromPlayer(int amount)
     {
         if (amount < 0) return;
         if (Playerbalance >= amount)

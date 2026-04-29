@@ -33,7 +33,6 @@ public class CameraMovement : MonoBehaviour
     {
         if (_axes == RotationAxes.XandY)
         {
-            // Вертикальный поворот (Голова/Камера)
             _rotationX -= Input.GetAxis("Mouse Y") * _rotationSpeedVer;
             _rotationX = Mathf.Clamp(_rotationX, minVert, maxVert);
 
@@ -48,7 +47,6 @@ public class CameraMovement : MonoBehaviour
         }
         else if (_axes == RotationAxes.Y)
         {
-            // Вертикальный поворот (Голова/Камера)
             _rotationX -= Input.GetAxis("Mouse Y") * _rotationSpeedVer;
             _rotationX = Mathf.Clamp(_rotationX, minVert, maxVert);
 
