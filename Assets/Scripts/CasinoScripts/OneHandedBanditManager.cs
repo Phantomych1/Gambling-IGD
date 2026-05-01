@@ -12,14 +12,12 @@ public class OneHandedBanditManager : MonoBehaviour
 {
     public List<SlotSymbol> symbols;
 
-    /// <summary>
-    /// Selects a symbol name at random from the available symbols, using their associated drop weights to determine the
-    /// probability of selection.
-    /// </summary>
-    /// <remarks>If the total drop weight is zero or an unexpected condition occurs, the method returns the
-    /// name of the first symbol in the collection.</remarks>
-    /// <returns>A string containing the name of the randomly selected symbol. The probability of each symbol being selected is
-    /// proportional to its drop weight.</returns>
+    // Переменная для награды
+    public int _rewardAmount = 100;
+
+    // Та самая переменная-память для связи с UI барабанами
+    public string[] lastSpinResult;
+
     public string GetRandomSymbol()
     {
         int totalWeight = 0;
@@ -43,23 +41,35 @@ public class OneHandedBanditManager : MonoBehaviour
         return symbols[0].symbolName;
     }
 
-    // Метод для самого взаимодействия (вызывается, когда игрок жмет 'E' и запускает игру)
+    // Метод генерации спина
+    public string[] Spin()
+    {
+        string[] result = new string[3];
+        result[0] = GetRandomSymbol();
+        result[1] = GetRandomSymbol();
+        result[2] = GetRandomSymbol();
+
+        // Сохраняем результат, чтобы UI мог его прочитать
+        lastSpinResult = result;
+
+        return result;
+    }
+
+    // Метод для самого взаимодействия 
     public void PlayMachine()
     {
-        BalanceManager.Instance.AddMoneyToPlayer(_rewardAmount);
+        // Пока временно закомментировано, чтобы Unity не ругалась на отсутствие BalanceManager
+        // BalanceManager.Instance.AddMoneyToPlayer(_rewardAmount);
 
-        // 2. Получаем результаты спина
+        // Получаем результаты спина
         string[] spinResult = Spin();
 
         Debug.Log($"На барабанах: {spinResult[0]} | {spinResult[1]} | {spinResult[2]}");
 
-        // 3. Проверяем комбинацию (совпали ли все три символа)
+        // Проверяем комбинацию (совпали ли все три символа)
         if (spinResult[0] == spinResult[1] && spinResult[1] == spinResult[2])
         {
             Debug.Log($"Победа! Вы собрали комбинацию из трех: {spinResult[0]}");
-
-            // Здесь можно добавить логику выдачи приза в зависимости от того, какой именно символ выпал.
-            // Например, три семерки дают больше денег, чем три вишенки.
         }
         else
         {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class CoinManager : MonoBehaviour
 {
     [SerializeField] private int _rewardAmount = 50;
 
