@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.Events; // Добавили библиотеку событий
+using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -13,8 +13,8 @@ public class SlotMachineInteractor : MonoBehaviour
     public int costPerSpin = 10;
 
     [Header("События (Что делать с игроком)")]
-    public UnityEvent onMenuOpen;  // Вызовется, когда меню откроется
-    public UnityEvent onMenuClose; // Вызовется, когда меню закроется
+    public UnityEvent onMenuOpen;
+    public UnityEvent onMenuClose;
 
     private bool isPlayerNear = false;
     private OneHandedBanditManager banditManager;

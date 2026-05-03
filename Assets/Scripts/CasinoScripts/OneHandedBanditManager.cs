@@ -11,11 +11,7 @@ public class SlotSymbol
 public class OneHandedBanditManager : MonoBehaviour
 {
     public List<SlotSymbol> symbols;
-
-    // Переменная для награды
-    public int _rewardAmount = 100;
-
-    // Та самая переменная-память для связи с UI барабанами
+    public int _rewardAmount = 1000;
     public string[] lastSpinResult;
 
     public string GetRandomSymbol()
@@ -41,7 +37,6 @@ public class OneHandedBanditManager : MonoBehaviour
         return symbols[0].symbolName;
     }
 
-    // Метод генерации спина
     public string[] Spin()
     {
         string[] result = new string[3];
@@ -49,31 +44,35 @@ public class OneHandedBanditManager : MonoBehaviour
         result[1] = GetRandomSymbol();
         result[2] = GetRandomSymbol();
 
-        // Сохраняем результат, чтобы UI мог его прочитать
         lastSpinResult = result;
 
         return result;
     }
 
-    // Метод для самого взаимодействия 
     public void PlayMachine()
     {
-        // Пока временно закомментировано, чтобы Unity не ругалась на отсутствие BalanceManager
-        // BalanceManager.Instance.AddMoneyToPlayer(_rewardAmount);
+        BalanceManager.Instance.RemoveMoneyFromPlayer(100);
 
-        // Получаем результаты спина
-        string[] spinResult = Spin();
-
-        Debug.Log($"На барабанах: {spinResult[0]} | {spinResult[1]} | {spinResult[2]}");
-
-        // Проверяем комбинацию (совпали ли все три символа)
-        if (spinResult[0] == spinResult[1] && spinResult[1] == spinResult[2])
+        if (BalanceManager.Instance.Playerbalance >= 100)
         {
-            Debug.Log($"Победа! Вы собрали комбинацию из трех: {spinResult[0]}");
+            string[] spinResult = Spin();
+
+            Debug.Log($"На барабанах: {spinResult[0]} | {spinResult[1]} | {spinResult[2]}");
+
+            if (spinResult[0] == spinResult[1] && spinResult[1] == spinResult[2])
+            {
+                Debug.Log($"Победа! Вы собрали комбинацию из трех: {spinResult[0]}");
+                BalanceManager.Instance.AddMoneyToPlayer(_rewardAmount);
+            }
+            else
+            {
+                Debug.Log("Ничего не совпало. Попробуйте еще раз!");
+            }
         }
         else
         {
-            Debug.Log("Ничего не совпало. Попробуйте еще раз!");
+            Debug.Log("Недостаточно средств для игры. Пожалуйста, пополните баланс.");
+            return;
         }
     }
 

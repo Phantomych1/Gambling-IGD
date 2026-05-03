@@ -12,7 +12,7 @@ public class CoinManager : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            BalanceManager.Instance.RemoveMoneyFromPlayer(_rewardAmount);
+            BalanceManager.Instance.AddMoneyToPlayer(_rewardAmount);
 
             Destroy(gameObject);
         }

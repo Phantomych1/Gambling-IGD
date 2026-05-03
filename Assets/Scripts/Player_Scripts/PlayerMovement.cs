@@ -34,7 +34,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Спринт.
         if (Input.GetKey(KeyCode.LeftShift))
         {
             currentSpeed = 5 * 2;
@@ -52,7 +51,6 @@ public class PlayerMovement : MonoBehaviour
 
         ApplyGravity();
 
-        // Прыжок.
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             PerformJump();

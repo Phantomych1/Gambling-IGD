@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using TMPro;
 
 public class BalanceManager : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class BalanceManager : MonoBehaviour
     public int Playerbalance { get; private set;}
 
     public static event Action<int> OnBalanceChanged;
+
+    [SerializeField] private TextMeshProUGUI moneyText;
 
 
     /// <summary>
@@ -21,6 +24,7 @@ public class BalanceManager : MonoBehaviour
         Debug.Log($"Player Balance: {Playerbalance}");
 
         OnBalanceChanged?.Invoke(Playerbalance);
+        UpdateVisuals();
     }
 
     /// <summary>
@@ -37,6 +41,7 @@ public class BalanceManager : MonoBehaviour
         }
 
         OnBalanceChanged?.Invoke(Playerbalance);
+        UpdateVisuals();
     }
 
     private void Awake()
@@ -49,5 +54,12 @@ public class BalanceManager : MonoBehaviour
     {
         Playerbalance = 1000;
         OnBalanceChanged?.Invoke(Playerbalance);
+        UpdateVisuals();
+    }
+
+    private void UpdateVisuals()
+    {
+        // Используем интерполяцию строк для вывода
+        moneyText.text = $"€: {Playerbalance}";
     }
 }
