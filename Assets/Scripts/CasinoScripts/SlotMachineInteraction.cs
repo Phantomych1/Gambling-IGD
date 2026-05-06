@@ -3,16 +3,16 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Collections;
 
-public class SlotMachineInteractor : MonoBehaviour
+public class SlotMachineInteraction : MonoBehaviour
 {
-    [Header("Настройки UI")]
+    [Header("РќР°СЃС‚СЂРѕР№РєРё UI")]
     public GameObject slotMachineMenuUI;
     public SlotReelUI[] reels;
 
-    [Header("Настройки игры")]
-    public int costPerSpin = 10;
+    [Header("РќР°СЃС‚СЂРѕР№РєРё РёРіСЂС‹")]
+    public int costPerSpin = 100;
 
-    [Header("События (Что делать с игроком)")]
+    [Header("РЎРѕР±С‹С‚РёСЏ")]
     public UnityEvent onMenuOpen;
     public UnityEvent onMenuClose;
 
@@ -23,6 +23,27 @@ public class SlotMachineInteractor : MonoBehaviour
     void Start()
     {
         banditManager = GetComponent<OneHandedBanditManager>();
+        
+        // Dynamically find UI if not assigned (useful for prefabs)
+        if (slotMachineMenuUI == null)
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+            if (canvas != null)
+            {
+                Transform uiTransform = canvas.transform.Find("SlotMachineUI");
+                if (uiTransform != null)
+                {
+                    slotMachineMenuUI = uiTransform.gameObject;
+                    // If we found the UI, also try to find the reels inside it
+                    Transform reelsTransform = uiTransform.Find("Reels");
+                    if (reelsTransform != null && (reels == null || reels.Length == 0))
+                    {
+                        reels = reelsTransform.GetComponentsInChildren<SlotReelUI>();
+                    }
+                }
+            }
+        }
+
         if (slotMachineMenuUI != null) slotMachineMenuUI.SetActive(false);
     }
 
@@ -44,7 +65,26 @@ public class SlotMachineInteractor : MonoBehaviour
         Cursor.lockState = isActive ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isActive;
 
-        // Вместо кода вызываем настройки из Инспектора
+        // If opening the menu, wire the button to THIS machine
+        if (isActive)
+        {
+            Button playButton = slotMachineMenuUI.GetComponentInChildren<Button>();
+            if (playButton != null)
+            {
+                playButton.onClick.RemoveAllListeners();
+                playButton.onClick.AddListener(InsertCoinAndPlay);
+            }
+        }
+
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            var move = player.GetComponent<PlayerMovement>();
+            var cam = player.GetComponent<CameraMovement>();
+            if (move != null) move.enabled = !isActive;
+            if (cam != null) cam.enabled = !isActive;
+        }
+
         if (isActive) onMenuOpen.Invoke();
         else onMenuClose.Invoke();
     }
@@ -53,12 +93,13 @@ public class SlotMachineInteractor : MonoBehaviour
     {
         if (isSpinning) return;
 
-        Debug.Log($"Монеты внесены (Списано {costPerSpin}).");
-
         if (banditManager != null)
         {
             banditManager.PlayMachine();
-            StartCoroutine(AnimateReelsRoutine(banditManager.lastSpinResult));
+            if (banditManager.lastSpinResult != null && banditManager.lastSpinResult.Length > 0)
+            {
+                StartCoroutine(AnimateReelsRoutine(banditManager.lastSpinResult));
+            }
         }
     }
 
@@ -76,7 +117,7 @@ public class SlotMachineInteractor : MonoBehaviour
 
         if (reels.Length > 0 && reels[0] != null)
         {
-            yield return new WaitForSeconds(reels[0].spinDuration);
+            yield return new WaitForSeconds(reels[0].spinDuration + 0.5f);
         }
 
         isSpinning = false;
@@ -92,8 +133,10 @@ public class SlotMachineInteractor : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNear = false;
-            if (slotMachineMenuUI != null) slotMachineMenuUI.SetActive(false);
-            onMenuClose.Invoke(); // Включаем игрока обратно, если он отошел
+            if (slotMachineMenuUI != null && slotMachineMenuUI.activeSelf)
+            {
+                ToggleMenu();
+            }
         }
     }
 }
